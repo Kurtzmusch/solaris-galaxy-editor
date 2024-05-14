@@ -2,6 +2,10 @@
   <div id="star-attributes" v-if="galaxyEditor.selectedStar" >
     <div class='container'>
       <div class='row'>
+        <label class='col-6 col-form-label'>Selected Star #{{ galaxyEditor.selectedStar.id }}</label>
+      </div>
+
+      <div class='row'>
         <label class='col-6 col-form-label'>Infrastructure</label>
       </div>
       <div class='row'>
@@ -62,43 +66,47 @@
       <br/>
 
       <div class='row'>
-        <div class='col-6'>
-          <label class='col-form-label'>Warp Gate</label>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.warpGate' id='warpGateCheck'/>
+            <label class='form-check-label' for='warpGateCheck'>Warp Gate</label>
+          </div>
         </div>
-        <div class='col-6'>
-          <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.warpGate'/>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.homeStar' id='homeStarCheck'/>
+            <label class='form-check-label' for='homeStarCheck'>Home Star</label>
+          </div>
         </div>
-      </div>
-      <div class='row'>
-        <div class='col-6'>
-          <label class='col-form-label'>Home Star</label>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isAsteroidField' id='astroidFieldCheck'/>
+            <label class='form-check-label' for='astroidFieldCheck'>Asteroid Field</label>
+          </div>
         </div>
-        <div class='col-6'>
-          <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.homeStar'/>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isBinaryStar' id='binaryStarCheck'/>
+            <label class='form-check-label' for='binaryStarCheck'>Binary Star</label>
+          </div>
         </div>
-      </div>
-      <div class='row'>
-        <div class='col-6'>
-          <label class='col-form-label'>Asteroid Field</label>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isBlackHole' id='blackHoleCheck'/>
+            <label class='form-check-label' for='blackHoleCheck'>Black Hole</label>
+          </div>
         </div>
-        <div class='col-6'>
-          <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isAsteroidField'/>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isNebula' id='nebulaCheck'/>
+            <label class='form-check-label' for='nebulaCheck'>Nebula</label>
+          </div>
         </div>
-      </div>
-      <div class='row'>
-        <div class='col-6'>
-          <label class='col-form-label'>Nebula</label>
-        </div>
-        <div class='col-6'>
-          <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isNebula'/>
-        </div>
-      </div>
-      <div class='row'>
-        <div class='col-6'>
-          <label class='col-form-label'>Black Hole</label>
-        </div>
-        <div class='col-6'>
-          <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isBlackHole'/>
+        <div class='col-auto'>
+          <div class='form-check'>
+            <input class='form-check-input' type='checkbox' v-model='galaxyEditor.selectedStar.isPulsar' id='pulsarCheck'/>
+            <label class='form-check-label' for='pulsarCheck'>Pulsar</label>
+          </div>
         </div>
       </div>
 
@@ -123,6 +131,17 @@
           <select class='form-select' v-model.number='galaxyEditor.selectedStar.specialistId'>
             <option value='-1'>None</option>
             <option v-for='(specialist,index) in specialists' v-bind:value='specialist.id' :key='index'>{{specialist.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-6'>
+          <label class='col-form-label'>Worm Hole to Star</label>
+        </div>
+        <div class='col-6'>
+          <select class='form-select' v-model.number='galaxyEditor.selectedStar.wormHoleToStarId' v-on:input='updateWormHoleToStarId'>
+            <option value='-1'>None</option>
+            <option v-for='(star,index) in stars' v-bind:value='star.id' :key='index' :disabled='star.id === galaxyEditor.selectedStar.id || star.wormHoleToStarId !== -1'>Star #{{star.id}}</option>
           </select>
         </div>
       </div>
@@ -158,6 +177,10 @@
       },
       updateSpecialistID(id) {
         this.galaxyEditor.selectedStar.specialistId = id
+      },
+      updateWormHoleToStarId(e) {
+        const targetId = parseFloat(e.target.value)
+        this.galaxyEditor.updateWormHoleToStarId(targetId)
       }
     },
     computed: {
@@ -166,6 +189,9 @@
       },
       playerShapeAndColours() {
         return this.galaxyEditor.playerShapeAndColours
+      },
+      stars() {
+        return this.galaxyEditor.stars
       }
     }
   }

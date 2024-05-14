@@ -46,5 +46,29 @@
 		{
 				"id": 12,
 				"name": "Financial Analyst"
+		},
+		{
+				"id": 13,
+				"name": "Telescope Array"
+		},
+		{
+				"id": 14,
+				"name": "Mineral Extractor"
+		},
+		{
+				"id": 15,
+				"name": "Cryo Chamber"
+		},
+		{
+				"id": 16,
+				"name": "Stellar Engine"
+		},
+		{
+				"id": 17,
+				"name": "Stellar Beacon"
+		},
+		{
+				"id": 18,
+				"name": "Star Gate"
 		}
 ]

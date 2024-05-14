@@ -106,20 +106,6 @@
 
       <div class='row'>
         <div class='col-6'>
-          <label class='col-form-label'>Nebula Range</label>
-        </div>
-      </div>
-      <div class='row'>
-        <div class='col-6'>
-          <input class='form-range v-center-range' type="range" v-model.number='nebulaRange'/>
-        </div>
-        <div class='col-6'>
-          <button @click="randomizeNebulas" class='btn btn-primary col-12'><i class="fa fa-chevron-down"></i>Randomize Nebulas</button>
-        </div>
-      </div>
-
-      <div class='row'>
-        <div class='col-6'>
           <label class='col-form-label'>Asteroid Field Range</label>
         </div>
       </div>
@@ -134,6 +120,20 @@
 
       <div class='row'>
         <div class='col-6'>
+          <label class='col-form-label'>Binary Star Range</label>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-6'>
+          <input class='form-range v-center-range' type="range" v-model.number='binaryStarRange'/>
+        </div>
+        <div class='col-6'>
+          <button @click="randomizeBinaryStars" class='btn btn-primary col-12'><i class="fa fa-chevron-down"></i>Randomize Binary Stars</button>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-6'>
           <label class='col-form-label'>Black Hole Range</label>
         </div>
       </div>
@@ -143,6 +143,34 @@
         </div>
         <div class='col-6'>
           <button @click="randomizeBlackHoles" class='btn btn-primary col-12'><i class="fa fa-chevron-down"></i>Randomize Black Holes</button>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-6'>
+          <label class='col-form-label'>Nebula Range</label>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-6'>
+          <input class='form-range v-center-range' type="range" v-model.number='nebulaRange'/>
+        </div>
+        <div class='col-6'>
+          <button @click="randomizeNebulas" class='btn btn-primary col-12'><i class="fa fa-chevron-down"></i>Randomize Nebulas</button>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-6'>
+          <label class='col-form-label'>Pulsar Range</label>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-6'>
+          <input class='form-range v-center-range' type="range" v-model.number='pulsarRange'/>
+        </div>
+        <div class='col-6'>
+          <button @click="randomizePulsars" class='btn btn-primary col-12'><i class="fa fa-chevron-down"></i>Randomize Pulsars</button>
         </div>
       </div>
     </div>
@@ -163,9 +191,11 @@ export default {
         industry: { min: 0, max: 100 },
         science: { min: 0, max: 100 }
       },
-      nebulaRange: 0,
       asteroidFieldRange: 0,
       blackHoleRange: 0,
+      binaryStarRange: 0,
+      nebulaRange: 0,
+      pulsarRange: 0,
       splitResources: false
     }
   },
@@ -224,7 +254,7 @@ export default {
         if( threshold < this.nebulaRange) {
           star.isNebula = true
         }
-        star._updateNebulaSprite()
+        star._updateGraphics()
       }
     },
     randomizeAsteroidFields() {
@@ -235,7 +265,7 @@ export default {
         if( threshold < this.asteroidFieldRange) {
           star.isAsteroidField = true
         }
-        star._updateAsteroidFieldSprite()
+        star._updateGraphics()
       }
     },
     randomizeBlackHoles() {
@@ -246,7 +276,29 @@ export default {
         if( threshold < this.blackHoleRange) {
           star.isBlackHole = true
         }
-        star._updateBlackHoleGeometry()
+        star._updateGraphics()
+      }
+    },
+    randomizeBinaryStars() {
+      let stars = this.galaxyEditor.stars
+      for(let star of stars) {
+        let threshold = Math.random()*100
+        star.isBinaryStar = false
+        if( threshold < this.binaryStarRange) {
+          star.isBinaryStar = true
+        }
+        star._updateGraphics()
+      }
+    },
+    randomizePulsars() {
+      let stars = this.galaxyEditor.stars
+      for(let star of stars) {
+        let threshold = Math.random()*100
+        star.isPulsar = false
+        if( threshold < this.pulsarRange) {
+          star.isPulsar = true
+        }
+        star._updateGraphics()
       }
     }
   }

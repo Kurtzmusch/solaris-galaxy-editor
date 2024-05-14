@@ -82,11 +82,20 @@ class TextureService {
       this._loadSpecialistTexture('starfighter')
       this._loadSpecialistTexture('double-ringed-orb')
       this._loadSpecialistTexture('rocket')
+      this._loadSpecialistTexture('radar-dish')
+      this._loadSpecialistTexture('energy-tank')
+      this._loadSpecialistTexture('cryo-chamber')
+      this._loadSpecialistTexture('rocket-thruster')
+      this._loadSpecialistTexture('targeting')
+      this._loadSpecialistTexture('star-gate')
     }
 
     _loadStarModifiers() {
       this.STAR_MODIFIERS['nebula'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/star-nebula-0.png')))
       this.STAR_MODIFIERS['asteroids'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/star-asteroid-field-0.png')))
+      this.STAR_MODIFIERS['binary'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/128x128_star_scannable_binary.svg')))
+      this.STAR_MODIFIERS['blackhole_binary'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/128x128_star_black_hole_binary.svg')))
+      this.STAR_MODIFIERS['wormhole'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/vortex.png')))
     }
     _loadStarSymbols() {
       this.STAR_SYMBOLS['scannable'] = new PIXI.Texture(PIXI.BaseTexture.from(require('./assets/128x128_star_scannable.svg')))

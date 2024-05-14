@@ -587,6 +587,18 @@ class GameHelper {
           return 'observatory'
         case 12:
           return 'double-ringed-orb'
+        case 13:
+          return 'radar-dish'
+        case 14:
+          return 'energy-tank'
+        case 15:
+          return 'cryo-chamber'
+        case 16:
+          return 'rocket-thruster'
+        case 17:
+          return 'targeting'
+        case 18:
+          return 'star-gate'
       }
     }
   }

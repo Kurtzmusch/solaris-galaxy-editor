@@ -7,6 +7,7 @@ class Star extends EventEmitter {
 
   static currentId = 0
   static textAttribs = {fontName: 'Arial'}
+  static smallTextAttribs = {fontName: 'Arial', fontSize: 14}
 
   constructor (app, location, fullStar, coloursValues, shapes) {
     super()
@@ -24,9 +25,12 @@ class Star extends EventEmitter {
     this.homeStar = false
     this.playerId = -1
     this.specialistId = -1
-    this.isNebula = false
-    this.isBlackHole = false
+    this.wormHoleToStarId = -1
     this.isAsteroidField = false
+    this.isBinaryStar = false
+    this.isBlackHole = false
+    this.isNebula = false
+    this.isPulsar = false
 
     let nr = Math.round(Math.random()*50)
     this.naturalResources = {
@@ -43,13 +47,16 @@ class Star extends EventEmitter {
       this.homeStar = fullStar.homeStar
       this.playerId = fullStar.playerId ?? -1
       this.specialistId = fullStar.specialistId ?? -1
+      this.wormHoleToStarId = fullStar.wormHoleToStarId ?? -1
       this.naturalResources = fullStar.naturalResources
       if( fullStar.infrastructure ) {
         this.infrastructure = fullStar.infrastructure
       }
-      this.isNebula = fullStar.isNebula
-      this.isBlackHole = fullStar.isBlackHole
       this.isAsteroidField = fullStar.isAsteroidField
+      this.isBinaryStar = fullStar.isBinaryStar
+      this.isBlackHole = fullStar.isBlackHole
+      this.isNebula = fullStar.isNebula
+      this.isPulsar = fullStar.isPulsar
     }
 
     this.app = app
@@ -94,14 +101,19 @@ class Star extends EventEmitter {
       this.container.scale.y = 1.0*this.baseScale
     }
     this._updateStarSprite()
+    this._updateStarText()
     this._updateWarpGateGeometry()
+    this._updateWormHole()
+    this._updateWormHoleText()
     this._updatePlayerGeometry()
     this._updateInfrastructureText()
     this._updateNaturalResourcesText()
     this._updateSpecialistSprite()
-    this._updateNebulaSprite()
-    this._updateBlackHoleGeometry()
     this._updateAsteroidFieldSprite()
+    this._updateBinaryStarSprite()
+    this._updateBlackHoleGeometry()
+    this._updateNebulaSprite()
+    this._updatePulsarGeometry()
   }
 
   _updatePlayerGeometry() {
@@ -212,7 +224,7 @@ class Star extends EventEmitter {
     if( this.blackHole_geometry ) {
       this.container.removeChild(this.blackHole_geometry)
     }
-    if( this.isBlackHole ) {
+    if( this.isBlackHole && !this.isBinaryStar ) {
       this.blackHole_geometry = new PIXI.Graphics()
       this.blackHole_geometry.lineStyle(2, 0x000000, 1.0)
       this.blackHole_geometry.beginFill()
@@ -221,6 +233,41 @@ class Star extends EventEmitter {
       this.blackHole_geometry.lineStyle(2, 0xffffff, 1.0)
       this.blackHole_geometry.drawCircle(0, 0, 8)
       this.container.addChild(this.blackHole_geometry)
+    }
+  }
+
+  _updateBinaryStarSprite() {
+    if( this.binaryStarSprite ) {
+      this.container.removeChild(this.binaryStarSprite)
+      this.binaryStarSprite.destroy()
+      this.binaryStarSprite = null
+    }
+    if( this.isBinaryStar ) {
+      let binaryStarTexture = TextureService.STAR_MODIFIERS[this.isBlackHole ? 'blackhole_binary' : 'binary']
+      this.binaryStarSprite = new PIXI.Sprite(binaryStarTexture)
+      this.binaryStarSprite.anchor.set(0.5)
+      this.binaryStarSprite.width = 24.0
+      this.binaryStarSprite.height = 24.0
+      this.container.addChild(this.binaryStarSprite)
+    }
+  }
+
+  _updatePulsarGeometry() {
+    if( this.pulsar_geometry ) {
+      this.container.removeChild(this.pulsar_geometry)
+    }
+    if( this.isPulsar ) {
+      this.pulsar_geometry = new PIXI.Graphics()
+      this.pulsar_geometry.lineStyle(1, 0xffffff, 0.5)
+      this.pulsar_geometry.moveTo(0, -20)
+      this.pulsar_geometry.lineTo(0, 20)
+      this.pulsar_geometry.drawEllipse(-5, 0, 5, 5)
+      this.pulsar_geometry.drawEllipse(5, 0, 5, 5)
+      this.pulsar_geometry.drawEllipse(-8, 0, 8, 8)
+      this.pulsar_geometry.drawEllipse(8, 0, 8, 8)
+      this.pulsar_geometry.rotation = Math.random()*Math.PI*2.0
+
+      this.container.addChild(this.pulsar_geometry)
     }
   }
 
@@ -237,16 +284,54 @@ class Star extends EventEmitter {
     }
   }
 
+  _updateWormHole() {
+    if( this.wormHole_sprite ) {
+      this.container.removeChild(this.wormHole_sprite)
+    }
+    if( this.wormHoleToStarId === -1 ) { return }
+    this.wormHole_sprite = new PIXI.Sprite(TextureService.STAR_MODIFIERS['wormhole'])
+    this.wormHole_sprite.anchor.set(0.5)
+    this.wormHole_sprite.alpha = 0.5
+    this.wormHole_sprite.width = 40.0
+    this.wormHole_sprite.height = 40.0
+    this.container.addChild(this.wormHole_sprite)
+  }
+
+  _updateWormHoleText() {
+    if( this.wormHole_text ) {
+      this.container.removeChild(this.wormHole_text)
+    }
+    if( this.wormHoleToStarId === -1 ) { return }
+    let textString = `>${this.wormHoleToStarId}`
+    this.wormHole_text = new PIXI.BitmapText(textString, Star.smallTextAttribs)
+    this.wormHole_text.position.x = 12
+    this.wormHole_text.position.y = -(this.wormHole_text.height/2.0)
+    this.container.addChild(this.wormHole_text)
+    //galaxyEditor.viewport.addChild(this.wormHole_text)
+  }
+
   _updateStarSprite() {
     if( this.star_sprite ) {
       this.container.removeChild(this.star_sprite)
     }
-    if( (this.specialistId >= 0) || (this.isBlackHole) ) { return }
+    if( (this.specialistId >= 0) || this.isBlackHole || this.isBinaryStar || this.isPulsar) { return }
     this.star_sprite = new PIXI.Sprite(TextureService.STAR_SYMBOLS['scannable'])
     this.star_sprite.anchor.set(0.5)
     this.star_sprite.width = 12.0
     this.star_sprite.height = 12.0
     this.container.addChild(this.star_sprite)
+  }
+
+  _updateStarText() {
+    if( this.star_text ) {
+      this.container.removeChild(this.star_text)
+    }
+    let textString = `#${this.id}`
+    this.star_text = new PIXI.BitmapText(textString, Star.smallTextAttribs)
+    this.star_text.position.x = -12-(this.star_text.width)
+    this.star_text.position.y = -(this.star_text.height/2.0)
+    this.container.addChild(this.star_text)
+    //galaxyEditor.viewport.addChild(this.star_text)
   }
 
   _updateNaturalResourcesText() {
@@ -310,11 +395,14 @@ class Star extends EventEmitter {
       //infrastructure: this.infrastructure,
       warpGate: this.warpGate,
       homeStar: this.homeStar,
-      isNebula: this.isNebula,
-      isBlackHole: this.isBlackHole,
       isAsteroidField: this.isAsteroidField,
-      playerId: (this.playerId >= 0 ? this.playerId : null) ,
-      specialistId: this.specialistId >= 0 ? this.specialistId : null
+      isBinaryStar: this.isBinaryStar,
+      isBlackHole: this.isBlackHole,
+      isNebula: this.isNebula,
+      isPulsar: this.isPulsar,
+      playerId: (this.playerId >= 0 ? this.playerId : null),
+      specialistId: this.specialistId >= 0 ? this.specialistId : null,
+      wormHoleToStarId: this.wormHoleToStarId >= 0 ? this.wormHoleToStarId : null
     })
   }
 

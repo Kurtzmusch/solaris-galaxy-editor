@@ -223,6 +223,7 @@ class GalaxyEditor extends EventEmitter {
     newStar.homeStar = star.homeStar
     newStar.playerId = star.playerId ?? -1
     newStar.specialistId = star.specialistId ?? -1
+    newStar.wormHoleToStarId = star.wormHoleToStarId ?? -1
 
     newStar.infrastructure.economy = star.infrastructure.economy
     newStar.infrastructure.industry = star.infrastructure.industry
@@ -232,9 +233,11 @@ class GalaxyEditor extends EventEmitter {
     newStar.naturalResources.industry = star.naturalResources.industry
     newStar.naturalResources.science = star.naturalResources.science
 
-    newStar.isNebula = star.isNebula
-    newStar.isBlackHole = star.isBlackHole
     newStar.isAsteroidField = star.isAsteroidField
+    newStar.isBlackHole = star.isBlackHole
+    newStar.isBinaryStar = star.isBinaryStar
+    newStar.isNebula = star.isNebula
+    newStar.isPulsar = star.isPulsar
     newStar._updateGraphics()
 
   }
@@ -350,8 +353,27 @@ class GalaxyEditor extends EventEmitter {
       if( index > -1 ) { this.stars.splice(index, 1) }
 
       this.viewport.removeChild( this.selectedStar.container )
+      this.destroyWormHolesToStar(this.selectedStar.id)
       this.selectedStar = null
     }
+  }
+
+  updateWormHoleToStarId(targetId) {
+    const beforeId = this.selectedStar.wormHoleToStarId
+    if (beforeId !== -1) {
+      // remove old inbound wormholes if any
+      this.destroyWormHolesToStar(this.selectedStar.id)
+    }
+    if (targetId !== -1) {
+      const otherStar = this.stars.find(s => s.id === targetId)
+      // remove old inbound wormholes to target star if any
+      this.destroyWormHolesToStar(targetId)
+      // create wormhole pair
+      otherStar.wormHoleToStarId = this.selectedStar.id
+      otherStar._updateGraphics()
+    }
+    this.selectedStar.wormHoleToStarId = targetId
+    this.selectedStar._updateGraphics()
   }
 
   destroyHovered() {
@@ -359,7 +381,17 @@ class GalaxyEditor extends EventEmitter {
     if( index > -1 ) { this.stars.splice(index, 1) }
 
     this.viewport.removeChild( this.hoveredStar.container )
+    this.destroyWormHolesToStar(this.hoveredStar.id)
     this.hoveredStar = null
+  }
+
+  destroyWormHolesToStar(starId) {
+    for( let origin of this.stars ) {
+      if (origin.wormHoleToStarId === starId) {
+        origin.wormHoleToStarId = -1
+        origin._updateGraphics()
+      }
+    }
   }
 
   getGalaxyCenter() {
